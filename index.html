@@ -4,10 +4,12 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport"
-        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
     <title>채팅</title>
-<link rel="manifest" href="manifest.json">
-<meta name="apple-mobile-web-app-capable" content="yes">
+
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+
     <style>
         * {
             box-sizing: border-box;
@@ -37,8 +39,8 @@
 
         .chat {
             flex: 1;
+            min-height: 0; /* ✅ 중요: iOS flex 스크롤 버그 방지 */
             padding: 16px;
-            padding-bottom: 12px;
             display: flex;
             flex-direction: column;
             gap: 6px;
@@ -180,9 +182,11 @@
                 send();
             }
         });
+
+        // PWA
         if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("service-worker.js");
-}
+            navigator.serviceWorker.register("service-worker.js");
+        }
     </script>
 
 </body>
