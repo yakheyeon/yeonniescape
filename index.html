@@ -1,196 +1,269 @@
 <!DOCTYPE html>
 <html lang="ko">
-
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport"
-        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-    <title>채팅</title>
+<meta charset="UTF-8">
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 
-    <link rel="manifest" href="manifest.json">
-    <meta name="apple-mobile-web-app-capable" content="yes">
+<title>Yeonnie Escape</title>
 
-    <style>
-        * {
-            box-sizing: border-box;
-        }
+<link rel="manifest" href="manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
 
-        html,
-        body {
-            height: 100%;
-            margin: 0;
-            overflow: hidden;
-            font-family: sans-serif;
-            background: #fff;
-        }
+<style>
 
-        body {
-            display: flex;
-            flex-direction: column;
-        }
+*{box-sizing:border-box;}
 
-        header {
-            text-align: center;
-            padding: 14px;
-            border-bottom: 1px solid #ddd;
-            font-weight: bold;
-            flex-shrink: 0;
-        }
+html,body{
+height:100%;
+margin:0;
+overflow:hidden;
+font-family:sans-serif;
+background:#fff;
+}
 
-        .chat {
-            flex: 1;
-            min-height: 0; /* ✅ 중요: iOS flex 스크롤 버그 방지 */
-            padding: 16px;
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
-        }
+body{
+display:flex;
+flex-direction:column;
+}
 
-        .msg-row {
-            display: flex;
-        }
+header{
+text-align:center;
+padding:14px;
+border-bottom:1px solid #ddd;
+font-weight:bold;
+}
 
-        .msg-row.left {
-            justify-content: flex-start;
-        }
+.chat{
+flex:1;
+padding:16px;
+display:flex;
+flex-direction:column;
+gap:8px;
+overflow-y:auto;
+-webkit-overflow-scrolling:touch;
+}
 
-        .msg-row.right {
-            justify-content: flex-end;
-            margin-top: 6px;
-        }
+.msg-row{
+display:flex;
+}
 
-        .msg {
-            max-width: 70%;
-            padding: 12px 14px;
-            border-radius: 8px;
-            background: #eee;
-            font-size: 14px;
-            line-height: 1.4;
-            word-break: break-word;
-        }
+.msg-row.left{
+justify-content:flex-start;
+}
 
-        .msg.user {
-            background: #2979ff;
-            color: white;
-        }
+.msg-row.right{
+justify-content:flex-end;
+}
 
-        .input-box {
-            display: flex;
-            gap: 6px;
-            padding: 8px;
-            padding-bottom: calc(8px + env(safe-area-inset-bottom));
-            border-top: 1px solid #ddd;
-            background: white;
-            flex-shrink: 0;
-        }
+.msg{
+max-width:70%;
+padding:12px 14px;
+border-radius:10px;
+background:#eee;
+font-size:14px;
+line-height:1.4;
+word-break:break-word;
+}
 
-        input {
-            flex: 1;
-            padding: 10px;
-            font-size: 16px; /* ✅ iOS 자동 확대 방지 */
-        }
+.msg.user{
+background:#2979ff;
+color:white;
+}
 
-        button {
-            padding: 10px 14px;
-            background-color: #2979ff;
-            border-radius: 8px;
-            color: white;
-            border: none;
-            white-space: nowrap;
-            font-size: 16px;
-        }
-    </style>
+.msg img{
+max-width:100%;
+border-radius:8px;
+margin-top:6px;
+}
+
+.input-box{
+display:flex;
+gap:6px;
+padding:8px;
+border-top:1px solid #ddd;
+background:white;
+}
+
+input{
+flex:1;
+padding:10px;
+font-size:16px;
+}
+
+button{
+padding:10px 14px;
+background:#2979ff;
+border-radius:8px;
+color:white;
+border:none;
+font-size:16px;
+}
+
+</style>
 </head>
 
 <body>
 
-    <header>채팅</header>
+<header>채팅</header>
 
-    <div class="chat" id="chat">
-        <div class="msg-row left">
-            <div class="msg">
-                나 오늘 <b>집</b>으로 데리러 와줄 수 있어?
-                항상 오던 <b>주소</b>로 오면 돼! 도착해서 내 <b>폰</b>으로 꼭 전화 주라~!
-                그리고 오늘 내 <b>포인트</b> 컬러는 <b>노랑</b>이야!
-            </div>
-        </div>
-    </div>
+<div class="chat" id="chat">
 
-    <div class="input-box">
-        <input id="code" placeholder="힌트코드 입력..." />
-        <button onclick="send()">입력</button>
-    </div>
+<div class="msg-row left">
+<div class="msg">
+나 오늘 <b>집</b>으로 데리러 와줄 수 있어?<br>
+항상 오던 <b>주소</b>로 오면 돼! 도착해서 내 <b>폰</b>으로 꼭 전화 주라~!<br>
+그리고 오늘 내 <b>포인트</b> 컬러는 <b>노랑</b>이야!
+</div>
+</div>
 
-    <script>
-        const hints = {
-            "HAPPY": "정답입니다! 엘리베이터를 타고 501호로 이동해주시기 바랍니다./<n>힌트코드 입력 시, 힌트를 사용할 수 있습니다.",
-            "ROOM1": "Do Not Disturb, 빈 칸의 수를 잘 살펴보세요.",
-            "ROOM3": "티켓 발권기를 통해 티켓을 구매해주세요.",
-            "ROOM2": "티켓 일련번호 택의 뒷 면의 텍스트와 티켓 상단 같은 색상의 텍스트를 찾아보세요.",
-            "ROOM4": "그림의 상하좌우를 유심히 살펴보세요. 앞을 바라본 상태에서 왼쪽 그림은 왼쪽 화살표, 오른쪽 그림은 오른쪽 화살표를 나타냅니다.",
-            "ROOM5": "메뉴판을 통해 특정 숫자를 확인해주세요."
-            "ROOM6": "3월을 생각해주세요."
-        };
+</div>
 
-        let unlocked = localStorage.getItem("unlocked") === "true";
+<div class="input-box">
+<input id="code" placeholder="정답을 입력하세요..." />
+<button id="sendBtn">입력</button>
+</div>
 
-        function send() {
-            const input = document.getElementById("code");
-            const value = input.value.trim().toUpperCase();
-            if (!value) return;
+<script>
 
-            addMessage(value, true);
-            input.value = "";
+const hints = {
 
-            setTimeout(() => {
-                if (!unlocked) {
-                    if (value === "HAPPY") {
-                        unlocked = true;
-                        localStorage.setItem("unlocked", "true");
-                        if (navigator.vibrate) navigator.vibrate(200);
-                        addMessage(hints["HAPPY"], false);
-                    } else {
-                        addMessage("오답입니다! 다시 생각해보세요.", false);
-                    }
-                    return;
-                }
+"HAPPY":{
+text:"정답입니다! 엘리베이터를 타고 501호로 이동해주세요.<br>힌트코드를 입력하면 힌트를 사용할 수 있습니다."
+},
 
-                addMessage(hints[value] || "잘못입력했습니다.", false);
-            }, 400);
-        }
+"ROOM1":{
+text:"Do Not Disturb, 빈 칸의 수를 잘 살펴보세요."
+},
 
-        function addMessage(text, isUser) {
-            const chat = document.getElementById("chat");
+"ROOM3":{
+text:"티켓 발권기를 통해 티켓을 구매해주세요."
+},
 
-            const row = document.createElement("div");
-            row.className = "msg-row " + (isUser ? "right" : "left");
+"ROOM2":{
+text:"티켓 일련번호 택의 뒷 면의 텍스트와 같은 색을 찾아보세요."
+},
+"ROOM4":{
+text:"전시된 그림과 화살표를 잘 매치해보세요. 왼쪽 그림은 왼쪽 화살표, 오른쪽 그림은 오른쪽 화살표입니다."
+},
+    "ROOM5":{
+text:"메뉴판의 특정 글자를 찾아보세요."
+},
+    "ROOM6":{
+text:"지금은 몇 월인가요?"
+}
+};
 
-            const bubble = document.createElement("div");
-            bubble.className = "msg" + (isUser ? " user" : "");
-            bubble.innerText = text;
+let unlocked = localStorage.getItem("unlocked")==="true";
 
-            row.appendChild(bubble);
-            chat.appendChild(row);
+function send(){
 
-            chat.scrollTop = chat.scrollHeight;
-        }
+const input=document.getElementById("code");
+const value=input.value.trim().toUpperCase();
 
-        // 엔터키 전송
-        document.getElementById("code").addEventListener("keydown", function (e) {
-            if (e.key === "Enter") {
-                e.preventDefault();
-                send();
-            }
-        });
+if(!value)return;
 
-        // PWA
-        if ("serviceWorker" in navigator) {
-            navigator.serviceWorker.register("service-worker.js");
-        }
-    </script>
+addMessage(value,true);
+
+input.value="";
+
+setTimeout(()=>{
+
+if(!unlocked){
+
+if(value==="HAPPY"){
+
+unlocked=true;
+localStorage.setItem("unlocked","true");
+
+addMessage(hints["HAPPY"].text,false,true);
+
+playSuccess();
+
+document.getElementById("code").placeholder="힌트코드를 입력하세요...";
+
+}else{
+
+addMessage("오답입니다. 다시 생각해보세요.",false);
+
+}
+
+return;
+
+}
+
+const hint=hints[value];
+
+if(hint){
+
+addMessage(hint.text,false,true,hint.img);
+
+}else{
+
+addMessage("잘못된 힌트코드입니다.",false);
+
+}
+
+},400);
+
+}
+
+function addMessage(text,isUser,isHTML=false,img=null){
+
+const chat=document.getElementById("chat");
+
+const row=document.createElement("div");
+row.className="msg-row "+(isUser?"right":"left");
+
+const bubble=document.createElement("div");
+bubble.className="msg"+(isUser?" user":"");
+
+if(isHTML){
+bubble.innerHTML=text;
+}else{
+bubble.innerText=text;
+}
+
+if(img){
+
+const image=document.createElement("img");
+image.src=img;
+bubble.appendChild(image);
+
+}
+
+row.appendChild(bubble);
+chat.appendChild(row);
+
+chat.scrollTop=chat.scrollHeight;
+
+}
+
+function playSuccess(){
+
+const audio=new Audio("https://assets.mixkit.co/sfx/preview/mixkit-correct-answer-tone-2870.mp3");
+audio.play();
+
+if(navigator.vibrate)navigator.vibrate(200);
+
+}
+
+document.getElementById("sendBtn").addEventListener("click",send);
+
+document.getElementById("code").addEventListener("keydown",function(e){
+
+if(e.key==="Enter"){
+e.preventDefault();
+send();
+}
+
+});
+
+if("serviceWorker" in navigator){
+navigator.serviceWorker.register("service-worker.js");
+}
+
+</script>
 
 </body>
-
 </html>
